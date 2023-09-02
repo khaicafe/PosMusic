@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta http-equiv='cache-control' content='no-cache'>
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
+    <link href="./styles.css" rel="stylesheet">
+    <title>NeoCafe v1.0</title>
+  </head>
+  <body>
+     <div class="col-md-2" style="
+      display: inline-flex; margin: 20px; top: 20px;width: 280px;">
+      <section class="implementation">
+        <div class="now-playing-board" id="now-playing-board-id">
+          <div class="now-playing-details">           
+            <span id="nameMusic"></span>
+          </div>
+        </div>
+        <div class="now-playing-board-bottom-bar" id="now-playing-board-bottom-bar-id">
+        </div>
+        <div class="play-controls">
+          <img src="https://pngimg.com/uploads/vinyl/vinyl_PNG21.png" width=70 height=70 id="vynl-id" class="vynl"/>
+          <div class="play-buttons">
+                  <i class='fa fa-step-backward'  id="preMusic" style='font-size:20px'></i>
+                  <div class='play-circle' id="playpause"></div>
+                  <i class='fa fa-step-forward'  id="nextMusic" style='font-size:20px'></i>
+          </div>	
+          
+          <div class="volume-button">
+            <i class='fa fa-volume-up' id="settingMusic" style='font-size:15px'></i>
+          </div>
+        </div>
+        <audio id="music"></audio>
+      
+      </section>
+        
+    </div>
+    <div class="popup-content">
+            <div class="popup-body">
+              <div class= "container" style="text-align: left;">
+                <div>
+                  <label for="music">
+                    <input type="checkbox" id="music" name="music" class="filled" checked>
+                    <span id="music">Loa nhạc</span>
+                  </label>
+                  <div class="outputSelector">
+                      <select id="music"></select>
+                  </div>
+                </div>
+            </div>
+          </div>
+    </div>
+    
+    
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>

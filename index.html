@@ -9,7 +9,7 @@
     <meta http-equiv='expires' content='0'>
     <meta http-equiv='pragma' content='no-cache'>
     <link href="./styles.css" rel="stylesheet">
-    <title>NeoCafe v1.0</title>
+    <!-- <title>NeoCafe v1.0</title> -->
   </head>
   <body>
      <div class="col-md-2" style="
@@ -54,9 +54,19 @@
             </div>
           </div>
     </div>
-    
-    
+
+   
+    <div id="messages" style="color:cyan; margin: 100px;">TEST</div>
+    <p>
+        Current version: <span id="version"></span>
+      </p>
+    <div class="w3-light-grey" style="background: #343a4070;">
+      <div class="w3-blue" style="height:24px;width:0%;background: #0ab0de;" id="progressBar"></div>
+    </div>
     <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
+    <!-- src="./renderer.js" -->
+    <script>
+         require('./renderer')
+    </script>
   </body>
 </html>

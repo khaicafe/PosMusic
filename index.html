@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <meta http-equiv='cache-control' content='no-cache'>
     <meta http-equiv='expires' content='0'>
     <meta http-equiv='pragma' content='no-cache'>
@@ -12,59 +12,65 @@
     <!-- <title>NeoCafe v1.0</title> -->
   </head>
   <body>
-     <div class="col-md-2" style="
-      display: inline-flex; margin: 20px; top: 20px;width: 280px;">
-      <section class="implementation">
-        <div class="now-playing-board" id="now-playing-board-id">
-          <div class="now-playing-details">           
-            <span id="nameMusic"></span>
-          </div>
-        </div>
-        <div class="now-playing-board-bottom-bar" id="now-playing-board-bottom-bar-id">
-        </div>
-        <div class="play-controls">
-          <img src="https://pngimg.com/uploads/vinyl/vinyl_PNG21.png" width=70 height=70 id="vynl-id" class="vynl"/>
-          <div class="play-buttons">
-                  <i class='fa fa-step-backward'  id="preMusic" style='font-size:20px'></i>
-                  <div class='play-circle' id="playpause"></div>
-                  <i class='fa fa-step-forward'  id="nextMusic" style='font-size:20px'></i>
-          </div>	
-          
-          <div class="volume-button">
-            <i class='fa fa-volume-up' id="settingMusic" style='font-size:15px'></i>
-          </div>
-        </div>
-        <audio id="music"></audio>
-      
-      </section>
-        
-    </div>
-    <div class="popup-content">
-            <div class="popup-body">
-              <div class= "container" style="text-align: left;">
-                <div>
-                  <label for="music">
-                    <input type="checkbox" id="music" name="music" class="filled" checked>
-                    <span id="music">Loa nhạc</span>
-                  </label>
-                  <div class="outputSelector">
-                      <select id="music"></select>
-                  </div>
-                </div>
-            </div>
-          </div>
-    </div>
-
+    <div class="player">
+ 
+      <!-- Define the section for displaying details -->
+      <div class="details">
+        <!-- <div class="now-playing">PLAYING x OF y</div> -->
+        <div class="track-art"></div>
+        <div class="track-name">Track Name</div>
+        <div class="track-artist">Track Artist</div>
+      </div>
    
-    <div id="messages" style="color:cyan; margin: 100px;">TEST</div>
-    <p>
-        Current version: <span id="version"></span>
-      </p>
-    <div class="w3-light-grey" style="background: #343a4070;">
-      <div class="w3-blue" style="height:24px;width:0%;background: #0ab0de;" id="progressBar"></div>
+      <!-- Define the section for displaying track buttons -->
+      <div class="buttons">
+        <div class="prev-track">
+          <i class="fa fa-step-backward fa-2x"></i>
+        </div>
+        <div class="playpause-track">
+          <i class="fa fa-play-circle fa-5x"></i>
+        </div>
+        <div class="next-track">
+          <i class="fa fa-step-forward fa-2x"></i>
+        </div>
+      </div>
+   
+      <!-- Define the section for displaying the seek slider-->
+      <div class="slider_container">
+        <div class="current-time">00:00</div>
+        <input type="range" min="1" max="100"
+          value="0" class="seek_slider">
+        <div class="total-duration">00:00</div>
+      </div>
+   
+      <!-- Define the section for displaying the volume slider-->
+      <div class="slider_container">
+        <div id="sound">
+          <i class="fa fa-volume-up"></i>
+        </div>
+        <!-- <i class="fa fa-volume-down"></i> -->
+        <input type="range" min="1" max="100"
+          value="99" class="volume_slider">
+        <!-- <i class="fa fa-volume-up"></i> -->
+        <div class="popup-content">
+         <div class= "container" style="text-align: left;">
+              <div>
+                <div class="outputSelector">
+                    <select id="music"></select>
+                </div>
+              </div>
+            </div>
+        </div> 
+      </div>
     </div>
-    <!-- You can also require other files to run in this process -->
-    <!-- src="./renderer.js" -->
+    <!-- <div id="version" style="color:cyan; margin: 100px;">TEST</div> -->
+    <div class="progress-bar-container">
+      <!-- <span id="messages">dsfsf</span> -->
+      <div class="progress-bar">
+          <span class="percentage java"></span>
+      </div>
+    </div>
+ 
     <script>
          require('./renderer')
     </script>

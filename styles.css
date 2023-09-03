@@ -1,152 +1,147 @@
 /* styles.css */
-::-webkit-scrollbar {
-display: none;
+body {
+  background-color: lightgreen;
+ 
+  /* Smoothly transition the background color */
+  transition: background-color .5s;
 }
-/*/////////////////////// sound //////////////////////////////*/
-.implementation
-{
-
-display: flex;
-justify-content: center;
-align-items: center;
-flex-direction:column;
+ 
+/* Using flex with the column direction to
+   align items in a vertical direction */
+.player {
+  /* height: 95vh; */
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
-
-.implementation .now-playing-board
-{
-/* height:110px; */
-width:280px;
-background-color:rgba(222, 247, 140, 0.4);
-border-radius:10px;
-overflow: hidden;
-/* display: flex;
-justify-content:flex-end; */
+ 
+.details {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  /* margin-top: 25px; */
 }
-
-.implementation .now-playing-board-bottom-bar
-{
-/* height:50px; */
-width:280px;
-background-color:rgba(255,255,255,0.4);
-border-radius:10px;
-display: flex;
-justify-content:flex-end;
-
+ 
+.track-art {
+  /* margin: 25px; */
+  height: 150px;
+  width: 150px;
+  background-image: URL(
+     "bgdefault.jpg");
+  background-size: cover;
+  background-position: center;
+  border-radius: 15%;
 }
-
-.implementation #now-playing-board-id
-{
-transform:translatey(10px);
-transition:transform 2s;
+ 
+/* Changing the font sizes to suitable ones */
+.now-playing {
+  font-size: 1rem;
 }
-
-.implementation #now-playing-board-bottom-bar-id
-{
-
-transform:translatey(-20%);
-transition:transform 2s;
-
+ 
+.track-name {
+  font-size: 1.5rem;
 }
-
-.implementation .now-playing-details
-{
-/* display: flex; */
-/* flex-direction: column; */
-color:black;
-/* margin: 25px 0; */
-/* padding-top: 10px; */
-margin-bottom: 0px;
-margin-left: 80px;
-margin-right: 15px;
-overflow: hidden;
-animation: marquee 15s linear infinite;
+ 
+.track-artist {
+  font-size: 0.75rem;
 }
-
-.implementation .now-playing-details > span
-{
-color:black;
-font-size: 14px;
-white-space: nowrap ;
-/* overflow: hidden; */
+ 
+/* Using flex with the row direction to
+   align items in a horizontal direction */
+.buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
-@keyframes marquee {
-0% {
-transform: translateX(100%);
+ 
+.playpause-track,
+.prev-track,
+.next-track {
+  padding: 0 15px;
+  opacity: 0.8;
+ 
+  /* Smoothly transition the opacity */
+  transition: opacity .2s;
 }
-100% {
-transform: translateX(-100%);
+ 
+/* Change the opacity when mouse is hovered */
+.playpause-track:hover,
+.prev-track:hover,
+.next-track:hover {
+  opacity: 1.0;
 }
+ 
+/* Define the slider width so that it scales properly */
+.slider_container {
+  width: 75%;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-/* -------------- */
-.implementation .play-controls
-{
-height:70px;
-width:280px;
-margin-top:-20%;
-background:white;
-border-radius:10px;
-display:flex;
-justify-content: space-around;
-align-items: center;
-z-index:2;
-/*   visibility: hidden; */
+ 
+/* Modify the appearance of the slider */
+.seek_slider, .volume_slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: black;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
 }
-
-.implementation .vynl
-{
-/* margin-top:-14%; */
-margin-left:-4%;
+ 
+/* Modify the appearance of the slider thumb */
+.seek_slider::-webkit-slider-thumb,
+.volume_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: white;
+  cursor: pointer;
+  border-radius: 50%;
 }
-
-.implementation .vynl-animation
-{
-animation: rotation 3s infinite linear;
+ 
+/* Change the opacity when mouse is hovered */
+.seek_slider:hover,
+.volume_slider:hover {
+  opacity: 1.0;
 }
-
-@keyframes rotation {
-from {
--webkit-transform: rotate(0deg);
+ 
+.seek_slider {
+  width: 60%;
 }
-to {
--webkit-transform: rotate(359deg);
+ 
+.volume_slider {
+  width: 30%;
 }
+ 
+.current-time,
+.total-duration {
+  padding: 10px;
 }
-
-.implementation .play-buttons
-{
-width:100px;
-height:30px;
-display:flex;
-justify-content:space-around;
-align-items:center;
+ 
+i.fa-volume-down,
+i.fa-volume-up,
+i.fa-volume-mute {
+  padding: 10px;
 }
-
-.implementation .volume-button
-{
-display:flex;
-justify-content: space-around;
-align-items: center;
-width:30px;
-height:30px;
+ 
+/* Change the mouse cursor to a pointer
+   when hovered over */
+i.fa-play-circle,
+i.fa-pause-circle,
+i.fa-step-forward,
+i.fa-step-backward {
+  cursor: pointer;
 }
-
-.implementation .play-circle
-{
-width:32px; 
-height:32px;
-background-image: url(https://cdn1.iconfinder.com/data/icons/ios-11-glyphs/30/circled_play-512.png);
-background-size: cover;
-background-repeat: no-repeat;
-}
-
-.implementation .pause-circle
-{
-width:28px; 
-height:28px;
-background-image: url(https://cdn2.iconfinder.com/data/icons/ios-tab-bar/25/Pause_Filled-512.png);
-background-size: cover;
-background-repeat: no-repeat;
-}
+/* //////////////////////////////////// */
 :root {
     /* checkbox */
     --checkbox-size: 16px;
@@ -161,6 +156,21 @@ background-repeat: no-repeat;
 /* body {
   background-color: #999999;
  } */
+ /* 가운데정렬 - position,transform*/
+ .popup-content {
+ 
+  border-radius: 5px;
+  }
+.popup-content .container {
+  /* position : absolute; */
+  /* top: 50%;
+  left : 50%;
+  transform :
+  translate(-50%,-50%);  */
+  display: flex;
+  justify-content: space-between;
+}
+
  .popup-content select {
   /* Reset Select */
   appearance: none;
@@ -196,7 +206,7 @@ background-repeat: no-repeat;
   top: 0;
   right: 0;
   padding: 0.5em;
-  padding-top: 0.2em;
+  padding-top: 0;
   background-color: #34495e;
   transition: .25s all ease;
   pointer-events: none;
@@ -208,53 +218,57 @@ background-repeat: no-repeat;
 }
 
 
-/* 가운데정렬 - position,transform*/
-.popup-content .container {
-  /* position : absolute; */
-  /* top: 50%;
-  left : 50%;
-  transform :
-  translate(-50%,-50%);  */
-  display: flex;
-  justify-content: space-between;
-}
-.popup-content {
-  margin-top: 30px;
-  width: 280px;
-}
-/* ////////////////////// popup sound ////////// */
-.popupSound {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-.popup-content {
-position: absolute;
-/* top: 20%; */
-/* left: 50%; */
-/* transform: translate(-50%, -50%); */
-/* min-width: 500px; */
-background-color: #fff;
-/* padding: 20px; */
-border-radius: 5px;
-}
-
-.popup-content .popup-title {
-text-align: center;
-}
-
-.popup-content .popup-body {
-/* margin-top: 20px; */
-}
-
-.popup-content .popup-footer {
-text-align: center;
-margin-top: 20px;
-}
 /* Add styles here to customize the appearance of your app */
+
+/* /////////////////// effect of the progress bar ///////////////*/
+/* Stylingthe background color of each
+animation and border radius */
+.progress-bar-container {
+  display: none;
+}
+/* Styling the h2 tag by giving color,
+letter spacing, font-size etc.*/
+.progress-bar-container span {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #eee;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+.progress-bar {
+  /* width: 800px; */
+  height: 5px;
+  /* margin-top: 10px; */
+  border: 1px solid #565656;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgb(245, 159, 0);
+  
+}
+.percentage {
+  display: block;
+  height: 100%;
+  background-color: orange;
+  border-radius: 5px;
+  width: 0;
+  /* animation: progress 1500ms ease-in 1; */
+  /* animation: progress 0.5s linear infinite; */
+  transition: width 1s linear;
+}
+
+/* .java {
+  width: 20%;
+} */
+ /* Animating the progress bar by
+initially starting from 0*/
+/* @keyframes progress {
+  from {
+      width: 0;
+  }
+} */
+/* @keyframes progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+} */

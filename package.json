@@ -1,10 +1,10 @@
 {
   "name": "neomusic",
-  "productName": "NeoMusic v1.0.2",
+  "productName": "NeoMusic v1.0.0",
   "description": "Phầm mềm nghe nhạc NeoMusic",
   "keywords": [],
   "main": "./main.js",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "author": "khaicafe",
   "scripts": {
     "start": "electron .",
@@ -20,7 +20,7 @@
         "provider": "github",
         "owner": "khaicafe",
         "repo": "PosMusic-Autoupdate",
-        "token": "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",
+        "token": "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",
         "private": true,
         "vPrefixedTagName": true
       }
@@ -31,7 +31,7 @@
     "dotenv": "^16.3.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.8",
-    "electron-updater": "^6.1.1",
+    "electron-updater": "^4.6.5",
     "fs.realpath": "1.0.0"
   },
   "devDependencies": {

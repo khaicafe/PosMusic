@@ -1,5 +1,5 @@
 const { app, BrowserWindow, dialog } = require('electron');
-app.commandLine.appendSwitch ("disable-http-cache");
+// app.commandLine.appendSwitch ("disable-http-cache");
 const path = require('path');
 const {autoUpdater} = require('electron-updater')
 const isDev = require("electron-is-dev");
@@ -39,10 +39,12 @@ const dispatch = (data) => {
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    // width: 350,
+    x: 0,
+    y: 0,
+    width: 350,
     // height: 220,
-    width: 1250,
-    height: 850,
+    // width: 1250,
+    height: 500,
     maximizable: false, // Vô hiệu hóa maximize
     webPreferences: {
     //   preload: path.join(__dirname, 'preload.js'),
@@ -53,10 +55,10 @@ function createWindow () {
       enableRemoteModule: true
     }
   })
-    const ses = mainWindow.webContents.session;
-    ses.clearCache(() => {
-      alert("Cache cleared!");
-    });
+    // const ses = mainWindow.webContents.session;
+    // ses.clearCache(() => {
+    //   alert("Cache cleared!");
+    // });
 
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
@@ -72,15 +74,16 @@ function createWindow () {
     mainWindow.resizable = false;
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools({ mode: "detach" });
     // Open the DevTools.
-    if (isDev) {
-      mainWindow.webContents.openDevTools({ mode: "detach" });
-      // require('react-devtools-electron');
-    };
+    // if (isDev) {
+    //   mainWindow.webContents.openDevTools({ mode: "detach" });
+    //   // require('react-devtools-electron');
+    // };
 
-    if (!isDev) {
-      autoUpdater.checkForUpdates();
-    };
+    // if (!isDev) {
+    //   autoUpdater.checkForUpdates();
+    // };
     return mainWindow
 }
 
@@ -90,7 +93,7 @@ function createWindow () {
 app.whenReady().then(() => {
   createWindow()
   // update laucher
-  // autoUpdater.checkForUpdatesAndNotify()
+  autoUpdater.checkForUpdatesAndNotify()
   // app.on('activate', function () {
   //   // On macOS it's common to re-create a window in the app when the
   //   // dock icon is clicked and there are no other windows open.

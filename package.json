@@ -9,12 +9,15 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder",
-    "package": "electron-builder --ia32 -p always",
+    "package": "electron-builder -w --ia32 -p always",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "build": {
+    "extraResources": [
+      ".env"
+    ],
     "publish": [
       {
         "provider": "github",
@@ -23,7 +26,13 @@
       }
     ],
     "win": {
-      "icon": "./icon.ico"
+      "icon": "./icon.ico",
+      "signingHashAlgorithms": [ "sha256" ],
+      "publisherName": "NeoCafe",
+      "signAndEditExecutable": true,
+      "verifyUpdateCodeSignature": true,
+      "certificateFile": "ca.pfx",
+      "certificatePassword": "1"
     }
   },
   "dependencies": {
@@ -31,6 +40,7 @@
     "dotenv": "^16.3.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.8",
+    "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^6.1.1",
     "fs-extra": "^11.1.1",
     "fs.realpath": "1.0.0"

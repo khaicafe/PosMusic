@@ -61,9 +61,7 @@ const dispatch = (data) => {
   }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
-// if (require('electron-squirrel-startup')) {
-//   app.quit();
-// }
+if (require('electron-squirrel-startup')) { app.quit();}
 
 // const filePath = path.resolve(__dirname, 'config.ini');
 // const filePath = path.join(__dirname, 'config.ini');

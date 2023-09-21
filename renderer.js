@@ -6,13 +6,22 @@
  * to expose Node.js functionality from the main process.
  */
 const { ipcRenderer } = require('electron');
+//$ yarn add electron-root-path
+const rootPath = window.require("electron-root-path").rootPath;
+console.log('root', rootPath, __dirname, process.cwd())
 
+// const paths = require('path')
+// console.log('Your App Path: ', process.execPath, paths.resolve(process.argv[1]), process.cwd())
+
+const app_main = null
+let filePath = `${process.cwd()}/config.ini`;
 const select = selector => document.querySelector(selector)
 // let container = select('#messages')
 // let progressBar = select('#progressBar')
 // let version = select('#version')
 let progres = select('.java')
 
+/////////////// listen event main.js ////////////////////
 ipcRenderer.on('Update_available', (event, text) => {
   console.log('update')
   let Update_available = document.querySelector('.progress-bar-container')
@@ -29,7 +38,23 @@ ipcRenderer.on('download-progress', (event, text) => {
   progres.style.width = `${text}%`
   console.log('down', text)
 })
+// nhận biến app từ main.js
+ipcRenderer.on('app-data', (event, app) => {
+  app_main = app
+  console.log(app_main);
+});
+
+// nhận biến path từ main.js
+// ipcRenderer.on('pathConfig', (event, path) => {
+//   // console.log(typeof path)
+//   filePath = `${path}/config.ini`;
+//   console.log(filePath);
+// });
+ // Gửi dữ liệu từ render process sang main process
+ipcRenderer.send('data-from-renderer', 'Hello from renderer process');
+
 //////////////////////////////////////////////// music /////////////////////////////////////////////////
+window.addEventListener('load', () => {
 var _next = 0, files, len
 const axios = require('axios')
   files = [
@@ -45,98 +70,115 @@ const instance = axios.create({
 
 const fs = require("fs");
 const path = require('path')
+
 // const filePath = path.resolve(__dirname, 'config.ini');
 // console.log(filePath);
-const filePath = './config.ini';
+
+// console.log(window.electronAPI.loadApp());
+// Truy cập biến app từ global
+// const app = remote.getGlobal('sharedObject').app;
+// const localAppDataPath = path.join(app.getPath('appData'), '..', 'Local'); // Đường dẫn đến thư mục cần xóa
+// // const folderD = localAppDataPath + '\\' +pjson.name + '-updater'
+// const folderLog = `${path.join(localAppDataPath)}/log`
+// console.log('folder', folderLog)
+
 
 // Select all the elements in the HTML page
 // and assign them to a variable
-let now_playing = document.querySelector(".now-playing");
-let track_art = document.querySelector(".track-art");
-let track_name = document.querySelector(".track-name");
-let track_artist = document.querySelector(".track-artist");
- 
-let playpause_btn = document.querySelector(".playpause-track");
-let next_btn = document.querySelector(".next-track");
-let prev_btn = document.querySelector(".prev-track");
- 
-let seek_slider = document.querySelector(".seek_slider");
-let volume_slider = document.querySelector(".volume_slider");
-let curr_time = document.querySelector(".current-time");
-let total_duration = document.querySelector(".total-duration");
+  let now_playing = document.querySelector(".now-playing");
+  let track_art = document.querySelector(".track-art");
+  let track_name = document.querySelector(".track-name");
+  let track_artist = document.querySelector(".track-artist");
+  
+  let playpause_btn = document.querySelector(".playpause-track");
+  let next_btn = document.querySelector(".next-track");
+  let prev_btn = document.querySelector(".prev-track");
+  
+  let seek_slider = document.querySelector(".seek_slider");
+  let volume_slider = document.querySelector(".volume_slider");
+  let curr_time = document.querySelector(".current-time");
+  let total_duration = document.querySelector(".total-duration");
 
-const soundButton = document.getElementById("sound");
-let soundStatus = true;
-let settings
- 
-// Specify globally used values
-let track_index = 0;
-let isPlaying = false;
-let updateTimer;
- 
-// Create the audio element for the player
-let curr_track = document.createElement('audio');
-// get variable set ui
-if (!fs.existsSync(filePath)) {
-  const configData = {
-    mute: '',
-    sound: ''
-  };
-  const jsonData = JSON.stringify(configData, null, 2);
-  fs.writeFileSync(filePath, jsonData, 'utf-8');
-} else {
-  const getdata = fs.readFileSync(filePath, 'utf-8');
-  settings = JSON.parse(getdata);
-  console.log(`settings JSON: ${getdata}`, settings)
-  if (settings) {
-    settings.mute? soundButton.innerHTML = "<i class='fa fa-volume-mute'></i>":soundButton.innerHTML = "<i class='fa fa-volume-up'></i>"
-    try {
-      soundStatus = settings.mute
-      curr_track.muted = settings.mute
-    } catch (error) {
-      console.log(error)
+  const soundButton = document.getElementById("sound");
+  let soundStatus = true;
+  let settings
+  
+  // Specify globally used values
+  let track_index = 0;
+  let isPlaying = false;
+  let updateTimer;
+  
+  // Create the audio element for the player
+  let curr_track = document.createElement('audio');
+
+
+  // get variable set ui
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.log('File does not exist', filePath);
+      const configData = {
+        mute: '',
+        sound: ''
+      };
+      const jsonData = JSON.stringify(configData, null, 2);
+      fs.writeFileSync(filePath, jsonData, 'utf-8');
+    } else {
+      console.log('File exists', filePath);
+      const getdata = fs.readFileSync(filePath, 'utf-8');
+      settings = JSON.parse(getdata);
+      console.log(`settings JSON: ${getdata}`, settings)
+      if (settings) {
+        settings.mute? soundButton.innerHTML = "<i class='fa fa-volume-mute'></i>":soundButton.innerHTML = "<i class='fa fa-volume-up'></i>"
+        try {
+          soundStatus = settings.mute
+          curr_track.muted = settings.mute
+        } catch (error) {
+          console.log(error)
+        }
+        // get device đã save
+        // const storeTemp = ['music']
+        // storeTemp.map((item) => {
+        //   var soundName = settings
+        //   if (soundName){
+        //     // Request user permission to access the audio device
+        //     const constraints = { audio: { deviceId: soundName.sound },};
+        //     navigator.mediaDevices.getUserMedia(constraints)
+        //     attachSinkId(item, soundName)
+        //   } else {
+        //     curr_track.setSinkId('default')
+        //   }
+        // });
+        
+      } 
     }
-    // get device đã save
-    const storeTemp = ['music']
-    storeTemp.map((item) => {
-      var soundName = settings
-      if (soundName){
-        // Request user permission to access the audio device
-        const constraints = { audio: { deviceId: soundName.sound },};
-        navigator.mediaDevices.getUserMedia(constraints)
-        attachSinkId(item, soundName)
-      } else {
-      curr_track.setSinkId('default')
-      }
-    });
     
-  } 
-}
- 
-// Define the list of tracks that have to be played
-let track_list = [
-  {
-    name: "Night Owl",
-    artist: "Broke For Free",
-    image: "Image URL",
-    url: "https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3"
-  },
-  {
-    name: "Enthusiast",
-    artist: "Tours",
-    image: "Image URL",
-    url: "https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3"
-  },
-  {
-    name: "Shipping Lanes",
-    artist: "Chad Crouch",
-    image: "Image URL",
-    url: "https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3",
-  },
-];
+  });
+  // test list sound
+  let track_list = [
+    {
+      name: "Night Owl",
+      artist: "Broke For Free",
+      image: "Image URL",
+      url: "https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3"
+    },
+    {
+      name: "Enthusiast",
+      artist: "Tours",
+      image: "Image URL",
+      url: "https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3"
+    },
+    {
+      name: "Shipping Lanes",
+      artist: "Chad Crouch",
+      image: "Image URL",
+      url: "https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3",
+    },
+  ];
+
+  BeginPlay()
 
 //////////////////
-function loadTrack(track_index) {
+async function loadTrack(track_index) {
   // Clear the previous seek timer
   clearInterval(updateTimer);
   resetValues();
@@ -192,7 +234,7 @@ function playpauseTrack() {
   else pauseTrack();
 }
  
-function playTrack() {
+async function playTrack() {
   // Play the loaded track
   curr_track.play();
   isPlaying = true;
@@ -375,11 +417,11 @@ async function shuffleArrayByKeyword(array, temp) {
 // .catch(function(error) {
 //   console.error('Error checking permission:', error);
 // });
-BeginPlay()
+
 async function BeginPlay () {
   // get list music
   const res = await instance.get();
-  console.log('get list music', res.data)
+  // console.log('get list music', res.data)
   files = res.data.items
   len = files.length;
   const currentDate = new Date();
@@ -389,8 +431,8 @@ async function BeginPlay () {
   track_list = shuffledMusic
   console.log(shuffledMusic);
   // Load the first track in the tracklist
-  loadTrack(track_index);
-  playTrack()
+  await loadTrack(track_index);
+  await playTrack()
   gotDevices()
 }
 
@@ -398,8 +440,8 @@ async function BeginPlay () {
 
 async function gotDevices() {
   const deviceInfos = await navigator.mediaDevices.enumerateDevices({ audio: true })
-  // console.log('device', deviceInfos)
   const masterOutputSelector = document.querySelectorAll('.container select');
+  console.log('element', masterOutputSelector)
   for (let index = 0; index < masterOutputSelector.length; index++) {
     const element = masterOutputSelector[index];
      // set event change select
@@ -419,16 +461,15 @@ async function gotDevices() {
       }
     }
     // get device đã save
-    // var soundName = JSON.parse(localStorage.getItem(element.id));
+    var soundName = JSON.parse(localStorage.getItem(element.id));
     const getdata = fs.readFileSync(filePath, 'utf-8');
     var soundName = JSON.parse(getdata);
     if (soundName){
       // console.log('getName-sound', element, element.id, soundName.sound, soundName)
       // Request user permission to access the audio device
-      const constraints = { audio: { deviceId: soundName.sound },};
-      navigator.mediaDevices.getUserMedia(constraints)
+      // const constraints = { audio: { deviceId: soundName.sound },};
+      // navigator.mediaDevices.getUserMedia(constraints)
       element.value = soundName.sound
-      // console.log('element', element)
       attachSinkId(element.id, soundName.sound, element)
     }
   }
@@ -437,11 +478,13 @@ async function gotDevices() {
 function attachSinkId(elementId, sinkId, outputSelector) {
   var element;
   if (elementId == 'music'){
-    element = document.querySelector(`audio#${elementId}`)
+    element = curr_track //document.querySelector(`audio#${elementId}`)
   } else {
-    element = audioElement
+    // phần của notify đơn hàng new
+    // element = audioElement
+    element = curr_track
   }
-  // console.log('attachSinkId', elementId)
+  console.log('attachSinkId', element)
   if (element && typeof element.sinkId !== 'undefined') {
     // audioContext.setSinkId(sinkId)
     element.setSinkId(sinkId)
@@ -477,3 +520,5 @@ function changeAudioDestination(event) {
   fs.writeFileSync(filePath, jsonData, 'utf-8');
 }
 ///////////////////////////////////////////
+
+});

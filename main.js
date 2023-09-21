@@ -1,6 +1,6 @@
 // yarn make --arch=ia32 // old dùng electron forge
 // yarn package // electron build
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, contextBridge } = require('electron');
 app.commandLine.appendSwitch ("disable-http-cache");
 const path = require('path');
 const fs = require('fs-extra');
@@ -19,6 +19,21 @@ var pjson = require('./package.json');
 
 log.log("Application version = " + pjson.version);
 // log.log("Application version =" + app.getVersion())
+///////////////////////////////////////// path test //////////////////////////////
+// const appFolder = path.dirname(process.execPath);
+// const updateExe = path.resolve(appFolder, "..", "NeoMusic v2.0.3.exe");
+// const exeName = path.basename(process.execPath);
+// console.log('path', appFolder, updateExe, exeName)
+let rootDir = app.getAppPath()
+let last = path.basename(rootDir)
+if (last == 'app.asar') {
+    rootDir = path.dirname(app.getPath('exe'))
+}
+console.log('rootdir', rootDir)
+
+const rootPath = require("electron-root-path").rootPath;
+console.log('root', rootPath)
+///////////////////////////////////////////////////
 
 const localAppDataPath = path.join(app.getPath('appData'), '..', 'Local'); // Đường dẫn đến thư mục cần xóa
 const folderD = localAppDataPath + '\\' +pjson.name + '-updater'
@@ -29,6 +44,7 @@ log.transports.file.resolvePath = () => path.join(localAppDataPath, '/log/NeoMus
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 let mainWindow
 let updateDownloaded = false;
+
 
 // khởi động cùng window ds
 app.setLoginItemSettings({
@@ -53,12 +69,18 @@ fs.remove(folderLog, (err) => {
     console.log('Folder deleted successfully');
   }
 });
-
-
-// send value for ui
+/////////////////////////////////////////// listen ////////////////////////////
+// Lắng nghe sự kiện từ render process
+ipcMain.on('data-from-renderer', (event, data) => {
+  console.log(data); // In dữ liệu nhận được từ render process
+});
+/////////////////////////// send render /////////////////////////
+// send value for ui  // Gửi dữ liệu từ main process sang render process
 const dispatch = (data) => {
     mainWindow.webContents.send('message', data)
   }
+
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
 if (require('electron-squirrel-startup')) { app.quit();}
@@ -79,7 +101,7 @@ function createWindow () {
     icon: __dirname + '/icon.ico',
     maximizable: false, // Vô hiệu hóa maximize
     webPreferences: {
-    //   preload: path.join(__dirname, 'preload.js'),
+      // preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false,
       nodeIntegrationInWorker: true,
@@ -108,9 +130,33 @@ function createWindow () {
     mainWindow.setMenuBarVisibility(false)
     mainWindow.resizable = false;
 
+    // Accept all usb
+    mainWindow.webContents.on('select-usb-device', (event, details, callback) => {
+      // Add events to handle devices being added or removed before the callback on
+      // `select-usb-device` is called.
+      mainWindow.webContents.on('usb-device-added', (event, device) => {
+        console.log('usb-device-added FIRED WITH', device)
+        // Optionally update details.deviceList
+      })
+  
+      mainWindow.webContents.session.on('usb-device-removed', (event, device) => {
+        console.log('usb-device-removed FIRED WITH', device)
+        // Optionally update details.deviceList
+      })
+  
+      event.preventDefault()
+      
+    })
+    mainWindow.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+      return true
+    })
+    mainWindow.webContents.session.setDevicePermissionHandler((details) => {
+      return true
+    })
+   
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
-    // mainWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.openDevTools({ mode: "detach" });
 
     if (isDev) {
       mainWindow.webContents.openDevTools({ mode: "detach" });
@@ -123,9 +169,11 @@ function createWindow () {
     return mainWindow
 }
 
+// Gửi biến app từ main process sang render process
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+
 app.whenReady().then(() => {
   createWindow()
 //   autoUpdater.setFeedURL({
@@ -141,9 +189,16 @@ app.whenReady().then(() => {
   //   // dock icon is clicked and there are no other windows open.
   //   if (BrowserWindow.getAllWindows().length === 0) createWindow()
   // })
-
+  console.log(process.versions.electron);
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('version', app.getVersion())
+
+    // Đặt biến app vào handle to preload.js
+    // ipcMain.handle("channel-load-app", app);
+    ipcMain.handle('getPath', () => app.getPath("appData"));
+
+    // Gửi path config cho renderer js
+    mainWindow.webContents.send('pathConfig', localAppDataPath)
   })
 })
 

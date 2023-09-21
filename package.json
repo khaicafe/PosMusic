@@ -16,7 +16,7 @@
   },
   "build": {
     "extraResources": [
-      ".env"
+      "config.ini"
     ],
     "publish": [
       {
@@ -27,9 +27,12 @@
     ],
     "win": {
       "icon": "./icon.ico",
-      "signingHashAlgorithms": [ "sha256" ],
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
       "publisherName": "NeoCafe",
       "signAndEditExecutable": true,
+      "signDlls": true,
       "verifyUpdateCodeSignature": true,
       "certificateFile": "ca.pfx",
       "certificatePassword": "1"
@@ -40,6 +43,7 @@
     "dotenv": "^16.3.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.8",
+    "electron-root-path": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^6.1.1",
     "fs-extra": "^11.1.1",

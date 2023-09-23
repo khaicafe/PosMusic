@@ -6,15 +6,17 @@
  * to expose Node.js functionality from the main process.
  */
 const { ipcRenderer } = require('electron');
-//$ yarn add electron-root-path
-const rootPath = window.require("electron-root-path").rootPath;
-console.log('root', rootPath, __dirname, process.cwd())
+let filePath = `${process.cwd()}/config.ini`;
 
-// const paths = require('path')
-// console.log('Your App Path: ', process.execPath, paths.resolve(process.argv[1]), process.cwd())
+// Gửi dữ liệu từ render process sang main process Get path root config.ini
+ipcRenderer.send('send-path');
+ipcRenderer.on('path-reply', (event, appPath) => {
+  filePath = `${appPath}\\config.ini`;
+  // console.log('Đường dẫn thư mục appData:', filePath);
+});
 
 const app_main = null
-let filePath = `${process.cwd()}/config.ini`;
+// const filePath = `${process.cwd()}/config.ini`;
 const select = selector => document.querySelector(selector)
 // let container = select('#messages')
 // let progressBar = select('#progressBar')
@@ -44,15 +46,6 @@ ipcRenderer.on('app-data', (event, app) => {
   console.log(app_main);
 });
 
-// nhận biến path từ main.js
-// ipcRenderer.on('pathConfig', (event, path) => {
-//   // console.log(typeof path)
-//   filePath = `${path}/config.ini`;
-//   console.log(filePath);
-// });
- // Gửi dữ liệu từ render process sang main process
-ipcRenderer.send('data-from-renderer', 'Hello from renderer process');
-
 //////////////////////////////////////////////// music /////////////////////////////////////////////////
 window.addEventListener('load', () => {
 var _next = 0, files, len
@@ -70,18 +63,6 @@ const instance = axios.create({
 
 const fs = require("fs");
 const path = require('path')
-
-// const filePath = path.resolve(__dirname, 'config.ini');
-// console.log(filePath);
-
-// console.log(window.electronAPI.loadApp());
-// Truy cập biến app từ global
-// const app = remote.getGlobal('sharedObject').app;
-// const localAppDataPath = path.join(app.getPath('appData'), '..', 'Local'); // Đường dẫn đến thư mục cần xóa
-// // const folderD = localAppDataPath + '\\' +pjson.name + '-updater'
-// const folderLog = `${path.join(localAppDataPath)}/log`
-// console.log('folder', folderLog)
-
 
 // Select all the elements in the HTML page
 // and assign them to a variable
@@ -317,9 +298,7 @@ function seekUpdate() {
     total_duration.textContent = durationMinutes + ":" + durationSeconds;
   }
 }
-
-  // btn play pause
-// var btn_pause = document.getElementById('playpause');
+/////////////////////////// ////////////////////////////////////
 playpause_btn.addEventListener("click", function (el) {
   // play()
   playpauseTrack()
@@ -441,7 +420,7 @@ async function BeginPlay () {
 async function gotDevices() {
   const deviceInfos = await navigator.mediaDevices.enumerateDevices({ audio: true })
   const masterOutputSelector = document.querySelectorAll('.container select');
-  console.log('element', masterOutputSelector)
+  
   for (let index = 0; index < masterOutputSelector.length; index++) {
     const element = masterOutputSelector[index];
      // set event change select
@@ -461,16 +440,18 @@ async function gotDevices() {
       }
     }
     // get device đã save
-    var soundName = JSON.parse(localStorage.getItem(element.id));
     const getdata = fs.readFileSync(filePath, 'utf-8');
     var soundName = JSON.parse(getdata);
-    if (soundName){
-      // console.log('getName-sound', element, element.id, soundName.sound, soundName)
+    if (soundName && soundName.sound){
       // Request user permission to access the audio device
       // const constraints = { audio: { deviceId: soundName.sound },};
       // navigator.mediaDevices.getUserMedia(constraints)
+      console.log('soundName', soundName)
       element.value = soundName.sound
       attachSinkId(element.id, soundName.sound, element)
+    } else {
+      console.log('soundName not', soundName)
+      element.options[0].defaultSelected = true;
     }
   }
  

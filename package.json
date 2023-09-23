@@ -1,10 +1,10 @@
 {
   "name": "neomusic",
-  "productName": "NeoMusic v2.0.3",
+  "productName": "NeoMusic v2.0.8",
   "description": "Phầm mềm nghe nhạc NeoMusic",
   "keywords": [],
   "main": "./main.js",
-  "version": "2.0.3",
+  "version": "2.0.8",
   "author": "khaicafe",
   "scripts": {
     "start": "electron .",
@@ -15,6 +15,11 @@
     "lint": "echo \"No linting configured\""
   },
   "build": {
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": true
+    },
     "extraResources": [
       "config.ini"
     ],
@@ -26,14 +31,14 @@
       }
     ],
     "win": {
+      "publisherName": "NeoCafe",
       "icon": "./icon.ico",
       "signingHashAlgorithms": [
         "sha256"
       ],
-      "publisherName": "NeoCafe",
       "signAndEditExecutable": true,
-      "signDlls": true,
-      "verifyUpdateCodeSignature": true,
+      "signDlls": false,
+      "verifyUpdateCodeSignature": false,
       "certificateFile": "ca.pfx",
       "certificatePassword": "1"
     }

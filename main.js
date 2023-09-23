@@ -1,16 +1,12 @@
 // yarn make --arch=ia32 // old dùng electron forge
 // yarn package // electron build
-const { app, BrowserWindow, dialog, ipcMain, contextBridge } = require('electron');
+const { app, dialog, BrowserWindow, ipcMain, contextBridge } = require('electron');
+
 app.commandLine.appendSwitch ("disable-http-cache");
 const path = require('path');
 const fs = require('fs-extra');
 const {autoUpdater} = require('electron-updater')
-autoUpdater.setFeedURL({
-  "provider": "github",
-  "owner": "khaicafe",
-  "repo": "PosMusic-Autoupdate",
-  "token": "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"
-});
+
 
 const isDev = require("electron-is-dev");
 // make log electron cmd
@@ -18,33 +14,32 @@ const log = require('electron-log')
 var pjson = require('./package.json');
 
 log.log("Application version = " + pjson.version);
-// log.log("Application version =" + app.getVersion())
-///////////////////////////////////////// path test //////////////////////////////
-// const appFolder = path.dirname(process.execPath);
-// const updateExe = path.resolve(appFolder, "..", "NeoMusic v2.0.3.exe");
-// const exeName = path.basename(process.execPath);
-// console.log('path', appFolder, updateExe, exeName)
+
+///////////////////////////////////////// path root //////////////////////////////
 let rootDir = app.getAppPath()
 let last = path.basename(rootDir)
 if (last == 'app.asar') {
     rootDir = path.dirname(app.getPath('exe'))
 }
-console.log('rootdir', rootDir)
+// Lắng nghe sự kiện từ render process send path config to renderer.js
+ipcMain.on('send-path', (event) => {
+  const appPath = app.getPath('appData');
+  event.reply('path-reply', rootDir);
+});
 
-const rootPath = require("electron-root-path").rootPath;
-console.log('root', rootPath)
-///////////////////////////////////////////////////
+////////////////////////////////////////   ////////////////////////////////////
 
 const localAppDataPath = path.join(app.getPath('appData'), '..', 'Local'); // Đường dẫn đến thư mục cần xóa
 const folderD = localAppDataPath + '\\' +pjson.name + '-updater'
-const folderLog = `${path.join(localAppDataPath)}/log`
-// log.transports.file.resolvePath = () => path.join('G:/NeoCafe Music V2/PosMusic-Autoupdate/', 'log/main.log')
-log.transports.file.resolvePath = () => path.join(localAppDataPath, '/log/NeoMusic.log')
+// const folderLog = `${path.join(localAppDataPath)}/log`
+const folderLog = `${path.join(rootDir)}/log`
+console.log('log', folderLog)
+// log.transports.file.resolvePath = () => path.join(localAppDataPath, '/log/NeoMusic.log')
+log.transports.file.resolvePath = () => path.join(folderLog, '/NeoMusic.log')
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 let mainWindow
 let updateDownloaded = false;
-
 
 // khởi động cùng window ds
 app.setLoginItemSettings({
@@ -52,7 +47,6 @@ app.setLoginItemSettings({
   // openAsHidden: true,
   path: app.getPath('exe'),
 });
-
 // Delete folder update
 fs.remove(folderD, (err) => {
   if (err) {
@@ -69,19 +63,12 @@ fs.remove(folderLog, (err) => {
     console.log('Folder deleted successfully');
   }
 });
-/////////////////////////////////////////// listen ////////////////////////////
-// Lắng nghe sự kiện từ render process
-ipcMain.on('data-from-renderer', (event, data) => {
-  console.log(data); // In dữ liệu nhận được từ render process
-});
+
 /////////////////////////// send render /////////////////////////
 // send value for ui  // Gửi dữ liệu từ main process sang render process
 const dispatch = (data) => {
     mainWindow.webContents.send('message', data)
   }
-
-
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
 if (require('electron-squirrel-startup')) { app.quit();}
 
@@ -155,8 +142,7 @@ function createWindow () {
     })
    
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
-    mainWindow.webContents.openDevTools({ mode: "detach" });
+    // mainWindow.webContents.openDevTools({ mode: "detach" });
 
     if (isDev) {
       mainWindow.webContents.openDevTools({ mode: "detach" });
@@ -173,7 +159,6 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-
 app.whenReady().then(() => {
   createWindow()
 //   autoUpdater.setFeedURL({
@@ -214,7 +199,15 @@ autoUpdater.channel = 'latest'
 autoUpdater.allowDowngrade = false
 autoUpdater.autoInstallOnAppQuit = false
 autoUpdater.autoDownload = false
-
+autoUpdater.logger = log
+autoUpdater.setFeedURL({
+  "provider": "github",
+  "owner": "khaicafe",
+  "repo": "PosMusic-Autoupdate",
+  // "token": "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", // update
+  // "token": "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", // up
+  "checkUpdateSignatures": false
+});
 autoUpdater.on("checking-for-update", () => {
     log.info('checking-for-update...')
     // dispatch('checking-for-update.')

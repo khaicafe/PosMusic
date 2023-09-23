@@ -204,8 +204,6 @@ autoUpdater.setFeedURL({
   "provider": "github",
   "owner": "khaicafe",
   "repo": "PosMusic-Autoupdate",
-  // "token": "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", // update
-  // "token": "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", // up
   "checkUpdateSignatures": false
 });
 autoUpdater.on("checking-for-update", () => {

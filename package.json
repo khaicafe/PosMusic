@@ -1,10 +1,10 @@
 {
   "name": "neomusic",
-  "productName": "NeoMusic v2.0.8",
+  "productName": "NeoMusic v2.0.9",
   "description": "Phầm mềm nghe nhạc NeoMusic",
   "keywords": [],
   "main": "./main.js",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "author": "khaicafe",
   "scripts": {
     "start": "electron .",

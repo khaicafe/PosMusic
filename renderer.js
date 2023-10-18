@@ -51,9 +51,9 @@ window.addEventListener('load', () => {
 var _next = 0, files, len
 const axios = require('axios')
   files = [
-{name: 'Us Uk 1', url: 'https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3'},
-{name: 'Us Uk 2', url: 'https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3'},
-{name: '8x 9x Hits 3', url: 'https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3'}
+// {name: 'Us Uk 1', url: 'https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3'},
+// {name: 'Us Uk 2', url: 'https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3'},
+// {name: '8x 9x Hits 3', url: 'https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3'}
 ]
 // let track_list = files
 
@@ -136,24 +136,24 @@ const path = require('path')
   });
   // test list sound
   let track_list = [
-    {
-      name: "Night Owl",
-      artist: "Broke For Free",
-      image: "Image URL",
-      url: "https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3"
-    },
-    {
-      name: "Enthusiast",
-      artist: "Tours",
-      image: "Image URL",
-      url: "https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3"
-    },
-    {
-      name: "Shipping Lanes",
-      artist: "Chad Crouch",
-      image: "Image URL",
-      url: "https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3",
-    },
+    // {
+    //   name: "Night Owl",
+    //   artist: "Broke For Free",
+    //   image: "Image URL",
+    //   url: "https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3"
+    // },
+    // {
+    //   name: "Enthusiast",
+    //   artist: "Tours",
+    //   image: "Image URL",
+    //   url: "https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3"
+    // },
+    // {
+    //   name: "Shipping Lanes",
+    //   artist: "Chad Crouch",
+    //   image: "Image URL",
+    //   url: "https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3",
+    // },
   ];
 
   BeginPlay()
@@ -399,20 +399,30 @@ async function shuffleArrayByKeyword(array, temp) {
 
 async function BeginPlay () {
   // get list music
-  const res = await instance.get();
+  try {
+    const res = await instance.get();
+    files = res.data.items
+    len = files.length;
+    const currentDate = new Date();
+    const keyword = currentDate.getDate();
+    const shuffledMusic = await shuffleArrayByKeyword(files, keyword);
+    track_list = shuffledMusic
+    console.log(shuffledMusic);
+
+    // Load the first track in the tracklist
+    await loadTrack(track_index);
+    await playTrack()
+    gotDevices()
+    
+  } catch (error) {
+    swal("Mất kết nối đến server. Vui lòng khởi động lại app", {
+      icon: "error",
+    });
+    return
+  }
   // console.log('get list music', res.data)
-  files = res.data.items
-  len = files.length;
-  const currentDate = new Date();
-  const keyword = currentDate.getDate();
-  // console.log('key', keyword, currentDate)
-  const shuffledMusic = await shuffleArrayByKeyword(files, keyword);
-  track_list = shuffledMusic
-  console.log(shuffledMusic);
-  // Load the first track in the tracklist
-  await loadTrack(track_index);
-  await playTrack()
-  gotDevices()
+
+  
 }
 
 //////////////////// Set Device ///////////////////////

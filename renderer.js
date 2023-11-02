@@ -461,7 +461,7 @@ function attachSinkId(elementId, sinkId, outputSelector) {
   if (elementId == 'music'){
     element = curr_track //document.querySelector(`audio#${elementId}`)
   } else {
-    // phần của notify đơn hàng new
+    // phần của notify đơn hàng ne
     // element = audioElement
     element = curr_track
   }

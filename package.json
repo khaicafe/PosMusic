@@ -5,6 +5,7 @@
   "keywords": [],
   "main": "main.js",
   "version": "3.0.0",
+
   "author": "khaicafe",
   "scripts": {
     "start": "electron .",

@@ -51,9 +51,9 @@ window.addEventListener('load', () => {
 var _next = 0, files, len
 const axios = require('axios')
   files = [
-{name: 'Us Uk 1', url: 'https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3'},
-{name: 'Us Uk 2', url: 'https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3'},
-{name: '8x 9x Hits 3', url: 'https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3'}
+// {name: 'Us Uk 1', url: 'https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3'},
+// {name: 'Us Uk 2', url: 'https://nhacchuong123.com/nhac-chuong/abcdefgh/hoa-co-lau-remix-tiktok-phong-max.mp3'},
+// {name: '8x 9x Hits 3', url: 'https://nhacchuong123.com/nhac-chuong/abcdefg/Nhac-Chuong-Trach-Duyen-Trach-Phan-Remix-Do-Thanh-Duy.mp3'}
 ]
 // let track_list = files
 
@@ -441,7 +441,6 @@ async function BeginPlay () {
   gotDevices()
   // check online riêng
   statusOnline()
-}
 // check connection server
 function checkConnection() {
    // Tạo một vòng lặp để kiểm tra kết nối với server

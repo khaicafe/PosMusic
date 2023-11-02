@@ -152,7 +152,7 @@ function createWindow () {
       autoUpdater.checkForUpdates();
     };
 
-    return mainWindow
+    // return mainWindow
 }
 
 // Gửi biến app từ main process sang render process
@@ -277,3 +277,72 @@ autoUpdater.on("update-downloaded", (info) => {
     })
   }
 })
+///////////////// test save music ///////////
+ipcMain.on('downloadFile', function (event, data) { 
+  // const filePath = data.filePath
+  // const item = data.item
+  console.log('url', data.url)
+  saveMusic(data.url)
+})
+// save music
+function saveMusic(urlMusic) {
+  const axios = require('axios')
+  // download = require('js-file-download');
+  // Tên bài hát
+  let songName = urlMusic.split('/');
+  songName = songName[songName.length - 1]; // Lấy phần tử cuối cùng
+
+  // Đường dẫn đến thư mục lưu tệp âm thanh trên máy tính
+  const saveDirectory = './saveMusic/';
+
+  // Đảm bảo thư mục tồn tại (nếu không, bạn có thể tạo nó)
+  if (!fs.existsSync(saveDirectory)) {
+    fs.mkdirSync(saveDirectory, { recursive: true });
+  }
+
+  // Đường dẫn tới tệp âm thanh khi đã lưu
+  const savePath = path.join(saveDirectory, `${songName}`);
+  console.log('save music', savePath)
+  axios({
+    method: 'get',
+    url: urlMusic,
+    responseType: 'stream',
+  })
+  .then((response) => {
+    // window.URL.createObjectURL(data);
+    // Ghi dữ liệu vào tệp âm thanh trên máy tính
+    response.data.pipe(fs.createWriteStream(savePath));
+
+    response.data.on('end', async () => {
+      // Tệp âm thanh đã được tải xuống và lưu với tên bài hát
+      console.log(`Tệp âm thanh "${songName}" đã được tải và lưu.`);
+      // del file default
+      const pathfile = './saveMusic/musicDefault.mp3'
+      await deleted(pathfile)
+     
+      // change name file music to default name
+      fs.rename(savePath, pathfile, function(err) {
+        if ( err ) console.log('ERROR: ' + err);
+      });
+    });
+    response.data.on('error', (error) => {
+      // event.sender.send('downloadError', error)
+      console.log('downloadError')
+    })
+  })
+  .catch((error) => {
+    console.error('Lỗi khi tải và lưu tệp âm thanh:');
+  });
+
+}
+async function deleted (pathfile) {
+  // check folder
+  if (!fs.existsSync(pathfile)) {
+    // fs.mkdirSync(path)
+    console.log('chưa có file')
+  // delete file if exists
+  } else if (fs.existsSync(pathfile)) {
+    // fs.unlinkSync(filePath)
+    fs.unlinkSync(pathfile)
+  }
+}

@@ -136,12 +136,12 @@ const path = require('path')
   });
   // test list sound
   let track_list = [
-    // {
-    //   name: "Night Owl",
-    //   artist: "Broke For Free",
-    //   image: "Image URL",
-    //   url: "https://nhacchuong123.com/nhac-chuong/nhac-doc/tayduky.mp3"
-    // },
+    {
+      name: "Music Local",
+      artist: "Broke For Free",
+      image: "Image URL",
+      url: "./saveMusic/musicDefault.mp3"
+    }
     // {
     //   name: "Enthusiast",
     //   artist: "Tours",
@@ -185,8 +185,13 @@ async function loadTrack(track_index) {
  
   // Apply a random background color
   random_bg_color();
+  // save music
+  ipcRenderer.send('downloadFile', {
+    url: track_list[track_index].url,
+    // filePath: filePath
+  })
 }
- 
+
 function random_bg_color() {
   // Get a random number between 64 to 256
   // (for getting lighter colors)
@@ -299,6 +304,15 @@ function seekUpdate() {
   }
 }
 /////////////////////////// ////////////////////////////////////
+// xử lý load file music default khi connect file url error
+curr_track.addEventListener("error", function(e) {
+  console.log("Playback error: " + e.currentTarget.error.code);
+  // load default musicDefault.mp3
+  curr_track.src = 'saveMusic/musicDefault.mp3'
+  curr_track.load();
+  curr_track.play();
+});         
+
 playpause_btn.addEventListener("click", function (el) {
   // play()
   playpauseTrack()
@@ -408,23 +422,110 @@ async function BeginPlay () {
     const shuffledMusic = await shuffleArrayByKeyword(files, keyword);
     track_list = shuffledMusic
     console.log(shuffledMusic);
-
     // Load the first track in the tracklist
-    await loadTrack(track_index);
-    await playTrack()
-    gotDevices()
+    // await loadTrack(track_index);
+    // await playTrack()
     
   } catch (error) {
-    swal("Mất kết nối đến server. Vui lòng khởi động lại app", {
-      icon: "error",
-    });
-    return
+    console.log('load list array music error')
+    checkConnection()
+    // swal("Mất kết nối đến server. Vui lòng khởi động lại app", {
+    //   icon: "error",
+    // });
+    // return
   }
-  // console.log('get list music', res.data)
+  // Load the first track in the tracklist
+  await loadTrack(track_index);
+  await playTrack()
+  // load device
+  gotDevices()
+  // check online riêng
+  statusOnline()
+// check connection server
+function checkConnection() {
+   // Tạo một vòng lặp để kiểm tra kết nối với server
+ const serverCheckInterval = setInterval(() => {
+  // Thực hiện một HTTP request đến server
+  // Ở đây, sử dụng module `http` để gửi một GET request
+  const http = require('http');
+  const options = {
+    hostname: 'cdn.neocafe.tech', // Thay bằng địa chỉ server thực tế
+    port: 80, // Port của server
+    path: '/media/music/playlist/metadata.json', // Đường dẫn trang bạn muốn kiểm tra
+    method: 'GET',
+  };
+    const request = http.request(options, async (response) => {
+      if (response.statusCode === 200) {
+        console.log('Server connection successful', response.body)
+        clearInterval(serverCheckInterval); // Dừng vòng lặp khi kết nối thành công
+        // mainWindow.loadURL('https://t.pos.imenu.tech/staff/'); // Tải trang web khi kết nối thành công
+      }
+      // Khởi tạo một biến để lưu dữ liệu phản hồi
+      let responseData = ''; 
+      // Xử lý dữ liệu khi nhận được
+      response.on('data', (chunk) => {
+        responseData += chunk;
+      });
+      // Xử lý khi kết thúc phản hồi
+      response.on('end', async () => {
+        // Dữ liệu phản hồi đã kết thúc
+        console.log('Dữ liệu phản hồi:', JSON.parse(responseData));
+        files = (JSON.parse(responseData)).items
+        len = files.length;
+        const currentDate = new Date();
+        const keyword = currentDate.getDate();
+        const shuffledMusic = await shuffleArrayByKeyword(files, keyword);
+        track_list = shuffledMusic
+        console.log(shuffledMusic);
+      });
+    });
 
-  
+    request.on('error', (error) => {
+      // Xử lý lỗi nếu không thể kết nối với server
+      console.log('Không thể kết nối với server:', error.message);
+    });
+
+    request.end();
+  }, 5000); // Kiểm tra mỗi 5 giây (có thể điều chỉnh thời gian kiểm tra)
 }
-
+// status check online 
+function statusOnline() {
+  // Tạo một vòng lặp để kiểm tra kết nối với server
+  const serverCheckInterval = setInterval(() => {
+    // Thực hiện một HTTP request đến server
+    // Ở đây, sử dụng module `http` để gửi một GET request
+    const http = require('http');
+    const options = {
+      hostname: 'cdn.neocafe.tech', // Thay bằng địa chỉ server thực tế
+      port: 80, // Port của server
+      path: '/media/music/playlist/metadata.json', // Đường dẫn trang bạn muốn kiểm tra
+      method: 'GET',
+    };
+      const request = http.request(options, async (response) => {
+        if (response.statusCode === 200) {
+          console.log('Server connection successful', response.body)
+          // clearInterval(serverCheckInterval); // Dừng vòng lặp khi kết nối thành công
+          // mainWindow.loadURL('https://t.pos.imenu.tech/staff/'); // Tải trang web khi kết nối thành công
+          document.querySelector('.online').style.display = 'block';
+          document.querySelector('.offline').style.display = 'none';
+        }
+        else {
+          console.log('Không thể kết nối với server:', response.statusCode);
+          document.querySelector('.online').style.display = 'none';
+          document.querySelector('.offline').style.display = 'block';
+        }
+      });
+  
+      request.on('error', (error) => {
+        document.querySelector('.online').style.display = 'none';
+        document.querySelector('.offline').style.display = 'block';
+        // Xử lý lỗi nếu không thể kết nối với server
+        console.log('Không thể kết nối với server:', error.message);
+      });
+  
+      request.end();
+    }, 5000); // Kiểm tra mỗi 5 giây (có thể điều chỉnh thời gian kiểm tra)m tra mỗi 5 giây (có thể điều chỉnh thời gian kiểm tra)
+}
 //////////////////// Set Device ///////////////////////
 
 async function gotDevices() {
@@ -471,7 +572,7 @@ function attachSinkId(elementId, sinkId, outputSelector) {
   if (elementId == 'music'){
     element = curr_track //document.querySelector(`audio#${elementId}`)
   } else {
-    // phần của notify đơn hàng new
+    // phần của notify đơn hàng ne
     // element = audioElement
     element = curr_track
   }

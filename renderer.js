@@ -442,6 +442,7 @@ async function BeginPlay () {
   gotDevices()
   // check online riêng
   statusOnline()
+}
 // check connection server
 function checkConnection() {
    // Tạo một vòng lặp để kiểm tra kết nối với server
